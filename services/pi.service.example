@@ -1,0 +1,15 @@
+[Unit]
+Description=Pi docker-compose service
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/home/vladimir/pi
+ExecStart=/home/vladimir/pi/docker-compose-start.sh
+ExecStop=/home/vladimir/pi/docker-compose-stop.sh
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target

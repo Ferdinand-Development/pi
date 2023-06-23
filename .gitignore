@@ -1,0 +1,50 @@
+.env
+prowlarr/
+hass/.storage
+hass/.cloud
+pihole/
+
+# .gitignore file for Home Assistant
+
+# Ignore configuration files that may contain sensitive information
+secrets.yaml
+*.pem
+*.db
+*.csr
+*.crt
+*.key
+
+# Ignore the files related to venv Python virtual environment
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+*.pyenv
+.pyenv/
+pip-selfcheck.json
+
+# Ignore VSCodium/VSCode settings
+.vscode/
+
+# Ignore MacOS system files
+.DS_Store
+
+# Ignore Home Assistant log and other runtime data
+home-assistant.log
+home-assistant_v2.db
+known_devices.yaml
+tts/
+.ipynb_checkpoints
+cloud/
+nmap_tracker.yaml
+www/icons/
+www/images/
+
+home-assistant_v2.db-*
+*.log
+*.log.*
+autobrr/

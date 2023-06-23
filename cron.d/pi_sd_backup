@@ -1,0 +1,2 @@
+# Runs every Sunday at 4AM
+0 4 * * 0 root $SCRIPT_PATH/backup_sd.sh # AUTOMATIC_JOB

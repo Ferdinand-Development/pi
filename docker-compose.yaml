@@ -1,0 +1,88 @@
+version: "3.7"
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    network_mode: "host"
+    environment:
+      TZ: ${TZ}
+      WEBPASSWORD: ${ACCESS_PASSWORD:-changeme}
+      PIHOLE_DNS_: '1.1.1.1;8.8.8.8'
+      WEB_PORT: 81
+    volumes:
+      - './pihole/etc-pihole:/etc/pihole'
+      - './pihole/etc-dnsmasq.d:/etc/dnsmasq.d'
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "dig", "+short", "@localhost", "local.health.check"]
+      interval: 5s
+      timeout: 1s
+      retries: 10
+  
+  caddy:
+    container_name: caddy
+    image: caddy:latest
+    restart: unless-stopped
+    depends_on:
+      pihole:
+        condition: service_healthy
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy/run.sh:/run.sh
+      - caddy_data:/data
+      - caddy_config:/config
+    network_mode: "host"
+    environment:
+      - ACCESS_PASSWORD=${ACCESS_PASSWORD:-changeme}
+      - ACCESS_USERNAME=${ACCESS_USERNAME:-admin}
+    command: ["/run.sh"]
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=${TZ}
+    volumes:
+      - ./prowlarr/config:/config
+    restart: unless-stopped
+    network_mode: host
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=${TZ}
+    restart: unless-stopped
+    network_mode: host
+
+  hass:
+    container_name: hass
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - ./hass:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+
+  autobrr:
+    container_name: autobrr
+    image: ghcr.io/autobrr/autobrr:latest
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+      - AUTOBRR__PORT=7474
+      - AUTOBRR__HOST=0.0.0.0
+    volumes:
+      - ./autobrr:/config
+    network_mode: host
+      
+volumes:
+  caddy_data:
+    external: true
+  caddy_config:

@@ -1,0 +1,58 @@
+{
+	log {
+		output stdout
+		format json
+	}
+}
+
+home.ferdinand.rs {
+	basicauth * {
+		##USERNAME_PLACEHOLDER## ##PASSWORD_PLACEHOLDER##
+	}
+	redir /tv /tv/
+	redir /movies /movies/
+	redir /torrent /torrent/
+	redir /dl /dl/
+	redir /prowlarr /prowlarr/
+	redir /autobrr /autobrr/
+
+	reverse_proxy /movies/* {
+		to 192.168.1.50:7878
+	}
+
+	reverse_proxy /prowlarr/* {
+		to 127.0.0.1:9696
+	}
+
+	reverse_proxy /tv/* {
+		to 192.168.1.50:8989
+	}
+
+	handle_path /dl/* {
+		reverse_proxy 192.168.1.50:6789
+	}
+
+	handle_path /torrent/* {
+		reverse_proxy 192.168.1.50:7890
+	}
+
+	handle_path /autobrr/* {
+		reverse_proxy 127.0.0.1:7474
+	}
+}
+
+pi.cvetic.in.rs {
+	reverse_proxy http://127.0.0.1:9000
+}
+
+pwd.cvetic.in.rs {
+	reverse_proxy 127.0.0.1:8080
+}
+
+dns.cvetic.in.rs {
+	reverse_proxy 127.0.0.1:81
+}
+
+homeassistant.cvetic.in.rs {
+	reverse_proxy 127.0.0.1:8123
+}

@@ -1,0 +1,15 @@
+[Unit]
+Description=Webhook Service
+After=network.target
+
+[Service]
+ExecStart=/bin/bash /home/vladimir/pi/scripts/run_webhook.sh
+WorkingDirectory=/home/vladimir/pi
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+StandardOutput=append:/var/log/deploy.log
+StandardError=append:/var/log/deploy.log
+User=vladimir
+Group=vladimir
+
+[Install]
+WantedBy=multi-user.target
